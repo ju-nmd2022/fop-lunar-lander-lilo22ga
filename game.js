@@ -1,6 +1,35 @@
-// BASIC VISUALS
+/*
 
-function draw() {
+BASIC VISUALS
+
+*/
+
+function blob(x, y) {
+  //body
+  fill(138, 115, 142);
+  noStroke();
+  beginShape();
+  vertex(x, y);
+  bezierVertex(x, y, x, y - 40, x + 18, y - 40);
+  bezierVertex(x + 20, y - 40, x + 40, y - 40, x + 40, y);
+  endShape();
+
+  //legs
+  rect(x, y, 6, 6);
+  rect(x + 34, y, 6, 6);
+
+  //arms
+  rect(x - 5, y - 20, 7, 6);
+  rect(x + 36, y - 20, 7, 6);
+
+  //face
+  fill(0, 0, 0);
+  circle(x + 10, y - 25, 3);
+  circle(x + 23, y - 25, 3);
+  circle(x + 16, y - 19, 2);
+}
+
+function scenery() {
   //sky - put into loop later for gradient?
   background(20, 15, 30);
 
@@ -17,20 +46,7 @@ function draw() {
   bezierVertex(450, 150, 500, 100, 450, 50);
   endShape();
 
-  //leafIntact - put into function instead
-  noStroke();
-  fill(76, 69, 52);
-  beginShape();
-  vertex(350, 360);
-  bezierVertex(350, 360, 290, 310, 200, 360);
-  bezierVertex(200, 360, 290, 410, 350, 360);
-  endShape();
-
-  stroke(76, 69, 52);
-  strokeWeight(3);
-  line(300, 360, 380, 360);
-
-  //startpoint cloud - put in function for movement?
+  //startpoint cloud
   noStroke();
   fill(240, 240, 180);
   beginShape();
@@ -53,24 +69,46 @@ function draw() {
   circle(95, 165, 20);
   circle(80, 165, 20);
   circle(65, 160, 20);
+}
 
-  //blob - put in function
-  fill(138, 115, 142);
+function leafIntact() {
   noStroke();
+  fill(76, 69, 52);
   beginShape();
-  vertex(80, 140);
-  bezierVertex(80, 140, 80, 100, 100, 100);
-  bezierVertex(100, 100, 120, 100, 120, 140);
+  vertex(350, 360);
+  bezierVertex(350, 360, 290, 310, 200, 360);
+  bezierVertex(200, 360, 290, 410, 350, 360);
   endShape();
 
-  rect(80, 140, 6, 6);
-  rect(114, 140, 6, 6);
+  stroke(76, 69, 52);
+  strokeWeight(3);
+  line(300, 360, 380, 360);
+}
 
-  rect(75, 120, 7, 6);
-  rect(116, 120, 7, 6);
+/*
 
-  fill(0, 0, 0);
-  circle(90, 115, 3);
-  circle(103, 115, 3);
-  circle(96, 121, 2);
+MOVEMENT
+
+*/
+
+let yFall = 140;
+let speed = 1;
+let acceleration = 0.1;
+let gameActive = true;
+
+function draw() {
+  scenery();
+  leafIntact();
+  blob(80, yFall);
+
+  if (gameActive) {
+    yFall = yFall + speed;
+    speed = speed + acceleration;
+  }
+  if (yFall > 350) {
+    gameActive = false;
+  }
+  if (gameActive && keyIsDown(32)) {
+    yFall = yFall - speed * 2;
+  }
 }
