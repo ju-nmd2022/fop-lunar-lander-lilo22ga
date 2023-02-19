@@ -93,7 +93,7 @@ MOVEMENT
 
 let yFall = 140;
 let speed = 1;
-let acceleration = 0.1;
+let acceleration = 0.2;
 let gameActive = true;
 
 function draw() {
@@ -109,6 +109,6 @@ function draw() {
     gameActive = false;
   }
   if (gameActive && keyIsDown(32)) {
-    yFall = yFall - speed * 2;
+    speed = speed - 0.5;
   }
 }
