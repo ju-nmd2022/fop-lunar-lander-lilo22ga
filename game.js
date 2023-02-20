@@ -91,23 +91,35 @@ MOVEMENT
 
 */
 
-let yFall = 140;
+let y = 140;
 let speed = 1;
 let acceleration = 0.2;
-let gameActive = true;
+let gameActive = false;
+
+function keyPressed() {
+  if (keyCode === 13) {
+    gameActive = true;
+  }
+}
 
 function draw() {
   scenery();
   leafIntact();
-  blob(80, yFall);
+  blob(80, y);
 
   if (gameActive) {
-    yFall = yFall + speed;
+    y = y + speed;
     speed = speed + acceleration;
   }
-  if (yFall > 350) {
+
+  if (y < 40) {
+    speed = 1;
+  }
+
+  if (y > 350) {
     gameActive = false;
   }
+
   if (gameActive && keyIsDown(32)) {
     speed = speed - 0.5;
   }
