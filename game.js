@@ -4,6 +4,14 @@ BASIC VISUALS
 
 */
 
+function startScreen() {
+  background(0, 0, 0);
+  fill(255, 255, 255);
+  rect(200, 195, 160, 40);
+  fill(0, 0, 0);
+  text("start game", 250, 220);
+}
+
 function blob(x, y) {
   //body
   fill(138, 115, 142);
@@ -85,6 +93,22 @@ function leafIntact() {
   line(300, 360, 380, 360);
 }
 
+function looseScreen() {
+  background(0, 0, 0);
+  fill(255, 255, 255);
+  rect(200, 195, 160, 40);
+  fill(0, 0, 0);
+  text("game over", 250, 220);
+}
+
+function winScreen() {
+  background(0, 0, 0);
+  fill(255, 255, 255);
+  rect(200, 195, 160, 40);
+  fill(0, 0, 0);
+  text("yay you won", 250, 220);
+}
+
 /*
 
 MOVEMENT
@@ -92,35 +116,60 @@ MOVEMENT
 */
 
 let y = 140;
-let speed = 1;
+let x = 80;
+let ySpeed = 1;
+let xSpeed = 3;
 let acceleration = 0.2;
 let gameActive = false;
 
-function keyPressed() {
-  if (keyCode === 13) {
-    gameActive = true;
-  }
-}
+let state = "game";
 
 function draw() {
-  scenery();
-  leafIntact();
-  blob(80, y);
+  //states - change into more readable order?
+  if (state === "start") {
+    startScreen();
+  } else if (state === "game") {
+    scenery();
+    leafIntact();
+    blob(x, y);
+  } else if (state === "loose") {
+    looseScreen();
+  } else if (state === "win") {
+    winScreen();
+  }
 
+  //right and left movement
+  if (keyIsDown(39) && y < 350 && x < 500) {
+    x = x + xSpeed;
+  }
+
+  if (keyIsDown(37) && y < 350 && x > 5) {
+    x = x - xSpeed;
+  }
+
+  //game starting when blob walks off cloud
+  if ((x > 160 || x < 20) && y < 350) {
+    gameActive = true;
+  }
+
+  //down movement
   if (gameActive) {
-    y = y + speed;
-    speed = speed + acceleration;
+    y = y + ySpeed;
+    ySpeed = ySpeed + acceleration;
   }
 
+  //max points for blob
   if (y < 40) {
-    speed = 1;
+    ySpeed = 1;
   }
 
+  //stopping point for blob
   if (y > 350) {
     gameActive = false;
   }
 
+  //up movement
   if (gameActive && keyIsDown(32)) {
-    speed = speed - 0.5;
+    ySpeed = ySpeed - 0.5;
   }
 }
