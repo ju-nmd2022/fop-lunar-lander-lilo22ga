@@ -1,15 +1,21 @@
+function setup() {
+  createCanvas(900, 500);
+  frameRate(30);
+}
+
 /*
 
-BASIC VISUALS
+VISUALS
 
 */
 
 function startScreen() {
   background(0, 0, 0);
   fill(255, 255, 255);
-  rect(200, 195, 160, 40);
+  rect(350, 210, 160, 40);
   fill(0, 0, 0);
-  text("start game", 250, 220);
+  textSize(12);
+  text("start game", 400, 235);
 }
 
 function blob(x, y) {
@@ -37,6 +43,14 @@ function blob(x, y) {
   circle(x + 16, y - 19, 2);
 }
 
+function fart(x, y) {
+  fill(255, 255, 255);
+  circle(x + 19, y + 8, 6);
+  circle(x + 22, y + 10, 6);
+  circle(x + 19, y + 12, 6);
+  circle(x + 16, y + 10, 6);
+}
+
 function scenery() {
   //sky - put into loop later for gradient?
   background(20, 15, 30);
@@ -44,14 +58,14 @@ function scenery() {
   //water
   fill(30, 29, 48);
   noStroke();
-  rect(0, 350, width, 100);
+  rect(0, 350, width, 150);
 
   //moon
   fill(150, 100, 0);
   beginShape();
-  vertex(450, 50);
-  bezierVertex(450, 50, 550, 100, 450, 150);
-  bezierVertex(450, 150, 500, 100, 450, 50);
+  vertex(800, 50);
+  bezierVertex(800, 50, 900, 100, 800, 150);
+  bezierVertex(800, 150, 850, 100, 800, 50);
   endShape();
 
   //startpoint cloud
@@ -83,35 +97,44 @@ function leafIntact() {
   noStroke();
   fill(76, 69, 52);
   beginShape();
-  vertex(350, 360);
-  bezierVertex(350, 360, 290, 310, 200, 360);
-  bezierVertex(200, 360, 290, 410, 350, 360);
+  vertex(500, 360);
+  bezierVertex(500, 360, 440, 310, 350, 360);
+  bezierVertex(350, 360, 440, 410, 500, 360);
   endShape();
 
   stroke(76, 69, 52);
   strokeWeight(3);
-  line(300, 360, 380, 360);
+  line(450, 360, 530, 360);
 }
 
 function looseScreen() {
   background(0, 0, 0);
   fill(255, 255, 255);
-  rect(200, 195, 160, 40);
+  rect(350, 210, 160, 40);
+  fill(255, 0, 0);
+  textSize(25);
+  text("Game over", 350, 150);
   fill(0, 0, 0);
-  text("game over", 250, 220);
+  textSize(12);
+  text("restart", 400, 235);
 }
 
 function winScreen() {
   background(0, 0, 0);
   fill(255, 255, 255);
-  rect(200, 195, 160, 40);
+  rect(350, 210, 160, 40);
   fill(0, 0, 0);
-  text("yay you won", 250, 220);
+  fill(0, 255, 0);
+  textSize(25);
+  text("Yay you won", 350, 150);
+  fill(0, 0, 0);
+  textSize(12);
+  text("restart", 400, 235);
 }
 
 /*
 
-MOVEMENT
+GAME
 
 */
 
@@ -122,7 +145,7 @@ let xSpeed = 3;
 let acceleration = 0.2;
 let gameActive = false;
 
-let state = "game";
+let state = "start";
 
 function draw() {
   //states - change into more readable order?
@@ -138,8 +161,13 @@ function draw() {
     winScreen();
   }
 
+  //static position for fart
+  if (gameActive && keyIsDown(32)) {
+    fart(x, y);
+  }
+
   //right and left movement
-  if (keyIsDown(39) && y < 350 && x < 500) {
+  if (keyIsDown(39) && y < 350 && x < 860) {
     x = x + xSpeed;
   }
 
@@ -171,5 +199,42 @@ function draw() {
   //up movement
   if (gameActive && keyIsDown(32)) {
     ySpeed = ySpeed - 0.5;
+  }
+
+  if (x > 350 && x < 500 && y >= 350) {
+    state = "win";
+  }
+
+  if ((x < 350 || x > 500) && y >= 350) {
+    state = "loose";
+  }
+}
+
+function mouseClicked() {
+  if (
+    state === "start" &&
+    mouseX > 350 &&
+    mouseX < 510 &&
+    mouseY > 210 &&
+    mouseY < 250
+  ) {
+    state = "game";
+  } else if (
+    (state === "win" &&
+      mouseX > 350 &&
+      mouseX < 510 &&
+      mouseY > 210 &&
+      mouseY < 250) ||
+    (state === "loose" &&
+      mouseX > 350 &&
+      mouseX < 510 &&
+      mouseY > 210 &&
+      mouseY < 250)
+  ) {
+    state = "game";
+    x = 80;
+    y = 140;
+    ySpeed = 1;
+    gameActive = false;
   }
 }
