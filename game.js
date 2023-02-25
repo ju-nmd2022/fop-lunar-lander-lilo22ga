@@ -179,14 +179,14 @@ function draw() {
   //game starting when blob walks off cloud
   if ((x > 160 || x < 20) && y < 350) {
     gameActive = true;
-    time = 0;
-    frameCount = 0;
   }
 
   //down movement
   if (gameActive) {
     y = y + ySpeed;
     ySpeed = ySpeed + acceleration;
+    time = 0;
+    frameCount = 0;
   }
 
   //max points for blob
@@ -199,7 +199,6 @@ function draw() {
     gameActive = false;
     time = Math.floor(frameCount / 30);
     text(time, 10, 450);
-    console.log(time);
   }
 
   //up movement
