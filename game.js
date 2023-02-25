@@ -144,6 +144,7 @@ let ySpeed = 1;
 let xSpeed = 3;
 let acceleration = 0.2;
 let gameActive = false;
+let time = 0;
 
 let state = "start";
 
@@ -178,6 +179,8 @@ function draw() {
   //game starting when blob walks off cloud
   if ((x > 160 || x < 20) && y < 350) {
     gameActive = true;
+    time = 0;
+    frameCount = 0;
   }
 
   //down movement
@@ -191,9 +194,12 @@ function draw() {
     ySpeed = 1;
   }
 
-  //stopping point for blob
+  //stopping point for blob and start time count
   if (y > 350) {
     gameActive = false;
+    time = Math.floor(frameCount / 30);
+    text(time, 10, 450);
+    console.log(time);
   }
 
   //up movement
@@ -201,15 +207,21 @@ function draw() {
     ySpeed = ySpeed - 0.5;
   }
 
-  if (x > 350 && x < 500 && y >= 350) {
+  //state change with certain values and time
+  if (x > 350 && x < 500 && y >= 350 && ySpeed < 4 && time === 1) {
     state = "win";
   }
 
-  if ((x < 350 || x > 500) && y >= 350) {
+  if ((x < 350 || x > 500) && y >= 350 && time === 1) {
+    state = "loose";
+  }
+
+  if (x > 350 && x < 500 && y >= 350 && ySpeed > 4 && time === 1) {
     state = "loose";
   }
 }
 
+//buttons for start and restart, reset values
 function mouseClicked() {
   if (
     state === "start" &&
