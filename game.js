@@ -52,8 +52,18 @@ function fart(x, y) {
 }
 
 function scenery() {
-  //sky - put into loop later for gradient?
-  background(20, 15, 30);
+  //sky
+
+  let yLine = 0;
+  const size = 1;
+
+  while (yLine < height) {
+    const p = yLine / height;
+    stroke(30 + p * 30, 29 + p * 13, 48 + p * 25);
+    rect(0, yLine, 900);
+
+    yLine = yLine + size;
+  }
 
   //water
   fill(30, 29, 48);
@@ -93,6 +103,12 @@ function scenery() {
   circle(65, 160, 20);
 }
 
+function water() {
+  fill(30, 29, 48);
+  noStroke();
+  rect(0, 350, width, 150);
+}
+
 function leafIntact() {
   noStroke();
   fill(76, 69, 52);
@@ -113,6 +129,7 @@ function looseScreen() {
   rect(350, 210, 160, 40);
   fill(255, 0, 0);
   textSize(25);
+  noStroke();
   text("Game over", 350, 150);
   fill(0, 0, 0);
   textSize(12);
@@ -162,22 +179,25 @@ function draw() {
     winScreen();
   }
 
+  const isOutsideLeaf = x < 350 || x > 500;
+  const isOnLeaf = x > 350 && x < 500;
+
   //static position for fart
   if (gameActive && keyIsDown(32)) {
     fart(x, y);
   }
 
   //right and left movement
-  if (keyIsDown(39) && y < 350 && x < 860) {
+  if (keyIsDown(39) && y < 355 && x < 860) {
     x = x + xSpeed;
   }
 
-  if (keyIsDown(37) && y < 350 && x > 5) {
+  if (keyIsDown(37) && y < 355 && x > 5) {
     x = x - xSpeed;
   }
 
   //game starting when blob walks off cloud
-  if ((x > 160 || x < 20) && y < 350) {
+  if ((x > 160 || x < 20) && y < 355) {
     gameActive = true;
   }
 
@@ -195,10 +215,15 @@ function draw() {
   }
 
   //stopping point for blob and start time count
-  if (y > 350) {
+  if (y > 355) {
     gameActive = false;
     time = Math.floor(frameCount / 30);
     text(time, 10, 450);
+
+    if (state === "game" && isOutsideLeaf) {
+      water();
+      leafIntact();
+    }
   }
 
   //up movement
@@ -207,15 +232,15 @@ function draw() {
   }
 
   //state change with certain values and time
-  if (x > 350 && x < 500 && y >= 350 && ySpeed < 4 && time === 1) {
+  if (isOnLeaf && y >= 355 && ySpeed < 4 && time === 1) {
     state = "win";
   }
 
-  if ((x < 350 || x > 500) && y >= 350 && time === 1) {
+  if (isOutsideLeaf && y >= 355 && time === 1) {
     state = "loose";
   }
 
-  if (x > 350 && x < 500 && y >= 350 && ySpeed > 4 && time === 1) {
+  if (isOnLeaf && y >= 355 && ySpeed > 4 && time === 1) {
     state = "loose";
   }
 }
