@@ -53,7 +53,6 @@ function fart(x, y) {
 
 function scenery() {
   //sky
-
   let yLine = 0;
   const size = 1;
 
@@ -109,18 +108,18 @@ function water() {
   rect(0, 350, width, 150);
 }
 
-function leafIntact() {
+function leafIntact(leafX, leafY) {
   noStroke();
-  fill(76, 69, 52);
+  fill(76, 69, 52, opacity);
   beginShape();
-  vertex(500, 360);
-  bezierVertex(500, 360, 440, 310, 350, 360);
-  bezierVertex(350, 360, 440, 410, 500, 360);
+  vertex(leafX, leafY);
+  bezierVertex(leafX, leafY, leafX - 50, leafY - 50, leafX - 150, leafY);
+  bezierVertex(leafX - 150, leafY, leafX - 60, leafY + 50, leafX, leafY);
   endShape();
 
-  stroke(76, 69, 52);
+  stroke(76, 69, 52, opacity);
   strokeWeight(3);
-  line(450, 360, 530, 360);
+  line(leafX, leafY, leafX + 30, leafY);
 }
 
 function looseScreen() {
@@ -157,11 +156,17 @@ GAME
 
 let y = 140;
 let x = 80;
+let leafY = 360;
+let leafX = 500;
 let ySpeed = 1;
 let xSpeed = 3;
 let acceleration = 0.2;
 let gameActive = false;
 let time = 0;
+let opacity = 255;
+let opacitySpeed = 0.5;
+let leafSpeed = 1;
+let opacityAcceleration = 0.2;
 
 let state = "start";
 
@@ -171,7 +176,7 @@ function draw() {
     startScreen();
   } else if (state === "game") {
     scenery();
-    leafIntact();
+    leafIntact(leafX, leafY);
     blob(x, y);
   } else if (state === "loose") {
     looseScreen();
@@ -199,6 +204,8 @@ function draw() {
   //game starting when blob walks off cloud
   if ((x > 160 || x < 20) && y < 355) {
     gameActive = true;
+
+    opacity = opacity - opacitySpeed;
   }
 
   //down movement
@@ -218,12 +225,19 @@ function draw() {
   if (y > 355) {
     gameActive = false;
     time = Math.floor(frameCount / 30);
-    text(time, 10, 450);
 
-    if (state === "game" && isOutsideLeaf) {
+    if (
+      (state === "game" && isOutsideLeaf) ||
+      (state === "game" && isOnLeaf && opacity < 150)
+    ) {
       water();
-      leafIntact();
+      leafIntact(leafX, leafY);
     }
+  }
+
+  if (opacity < 180) {
+    leafY = leafY + leafSpeed;
+    opacitySpeed = opacitySpeed + opacityAcceleration;
   }
 
   //up movement
@@ -232,7 +246,7 @@ function draw() {
   }
 
   //state change with certain values and time
-  if (isOnLeaf && y >= 355 && ySpeed < 4 && time === 1) {
+  if (isOnLeaf && y >= 355 && ySpeed < 3 && time === 1) {
     state = "win";
   }
 
@@ -240,7 +254,10 @@ function draw() {
     state = "loose";
   }
 
-  if (isOnLeaf && y >= 355 && ySpeed > 4 && time === 1) {
+  if (
+    (isOnLeaf && y >= 355 && ySpeed > 3 && time === 1) ||
+    (isOnLeaf && y >= 355 && opacity < 180 && time === 1)
+  ) {
     state = "loose";
   }
 }
@@ -270,7 +287,12 @@ function mouseClicked() {
     state = "game";
     x = 80;
     y = 140;
+    leafY = 360;
     ySpeed = 1;
+    opacity = 255;
+    leafSpeed = 1;
+    opacitySpeed = 0.5;
+    opacityAcceleration = 0.2;
     gameActive = false;
   }
 }
