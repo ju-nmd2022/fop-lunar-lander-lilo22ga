@@ -11,11 +11,22 @@ VISUALS
 
 function startScreen() {
   background(0, 0, 0);
+  textSize(40);
+  fill(60, 42, 73);
+  text("BLOB LANDER", 290, 160);
   fill(255, 255, 255);
-  rect(350, 210, 160, 40);
-  fill(0, 0, 0);
+  textSize(10);
+  text("HELP THE BLOB LAND SAFELY ON THE LEAF", 320, 200);
+  text("MOVE WITH                            AND SPACEBAR", 320, 230);
+  rect(400, 223, 12, 5);
+  rect(420, 223, 12, 5);
+  triangle(400, 233, 390, 225, 400, 218);
+  triangle(432, 233, 442, 225, 432, 218);
+  fill(60, 42, 73);
+  rect(350, 280, 140, 40);
+  fill(255, 255, 255);
   textSize(12);
-  text("start game", 400, 235);
+  text("START", 400, 305);
 }
 
 function blob(x, y) {
@@ -77,7 +88,7 @@ function scenery() {
   bezierVertex(800, 150, 850, 100, 800, 50);
   endShape();
 
-  //startpoint cloud
+  //cloud
   noStroke();
   fill(240, 240, 180);
   beginShape();
@@ -108,7 +119,7 @@ function water() {
   rect(0, 350, width, 150);
 }
 
-function leafIntact(leafX, leafY) {
+function leaf(leafX, leafY) {
   noStroke();
   fill(76, 69, 52, opacity);
   beginShape();
@@ -124,28 +135,38 @@ function leafIntact(leafX, leafY) {
 
 function looseScreen() {
   background(0, 0, 0);
-  fill(255, 255, 255);
-  rect(350, 210, 160, 40);
-  fill(255, 0, 0);
-  textSize(25);
   noStroke();
-  text("Game over", 350, 150);
-  fill(0, 0, 0);
+  textSize(40);
+  fill(60, 42, 73);
+  text("GAME", 305, 190);
+  fill(255, 0, 0);
+  text("OVER", 435, 190);
+  fill(60, 42, 73);
+  rect(350, 280, 140, 40);
+  fill(255, 255, 255);
   textSize(12);
-  text("restart", 400, 235);
+  text("RESTART", 394, 305);
+  fill(255, 255, 255);
+  textSize(10);
+  text("THE BLOB TRUSTED YOU...", 355, 230);
 }
 
 function winScreen() {
   background(0, 0, 0);
-  fill(255, 255, 255);
-  rect(350, 210, 160, 40);
-  fill(0, 0, 0);
+  noStroke();
+  textSize(40);
+  fill(60, 42, 73);
+  text("GAME", 360, 140);
   fill(0, 255, 0);
-  textSize(25);
-  text("Yay you won", 350, 150);
-  fill(0, 0, 0);
+  text("COMPLETED!", 295, 190);
+  fill(60, 42, 73);
+  rect(350, 280, 140, 40);
+  fill(255, 255, 255);
   textSize(12);
-  text("restart", 400, 235);
+  text("RESTART", 394, 305);
+  fill(255, 255, 255);
+  textSize(10);
+  text("THE BLOB IS FOREVER GRATEFUL", 340, 230);
 }
 
 /*
@@ -171,12 +192,12 @@ let opacityAcceleration = 0.2;
 let state = "start";
 
 function draw() {
-  //states - change into more readable order?
+  //states
   if (state === "start") {
     startScreen();
   } else if (state === "game") {
     scenery();
-    leafIntact(leafX, leafY);
+    leaf(leafX, leafY);
     blob(x, y);
   } else if (state === "loose") {
     looseScreen();
@@ -186,6 +207,7 @@ function draw() {
 
   const isOutsideLeaf = x < 350 || x > 500;
   const isOnLeaf = x > 350 && x < 500;
+  const button = mouseX > 350 && mouseX < 490 && mouseY > 280 && mouseY < 320;
 
   //static position for fart
   if (gameActive && keyIsDown(32)) {
@@ -228,13 +250,14 @@ function draw() {
 
     if (
       (state === "game" && isOutsideLeaf) ||
-      (state === "game" && isOnLeaf && opacity < 150)
+      (state === "game" && isOnLeaf && opacity < 180)
     ) {
       water();
-      leafIntact(leafX, leafY);
+      leaf(leafX, leafY);
     }
   }
 
+  //opacity of leaf accelerating as it moves
   if (opacity < 180) {
     leafY = leafY + leafSpeed;
     opacitySpeed = opacitySpeed + opacityAcceleration;
@@ -267,22 +290,22 @@ function mouseClicked() {
   if (
     state === "start" &&
     mouseX > 350 &&
-    mouseX < 510 &&
-    mouseY > 210 &&
-    mouseY < 250
+    mouseX < 490 &&
+    mouseY > 280 &&
+    mouseY < 320
   ) {
     state = "game";
   } else if (
     (state === "win" &&
       mouseX > 350 &&
-      mouseX < 510 &&
-      mouseY > 210 &&
-      mouseY < 250) ||
+      mouseX < 490 &&
+      mouseY > 280 &&
+      mouseY < 320) ||
     (state === "loose" &&
       mouseX > 350 &&
-      mouseX < 510 &&
-      mouseY > 210 &&
-      mouseY < 250)
+      mouseX < 490 &&
+      mouseY > 280 &&
+      mouseY < 320)
   ) {
     state = "game";
     x = 80;
